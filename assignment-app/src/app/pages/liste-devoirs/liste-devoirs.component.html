@@ -1,0 +1,21 @@
+<mat-card appearance="outlined">
+ 
+  <mat-card-header>
+    <mat-card-title>Liste des devoirs</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+      @for (assignment of assignments; track assignment.id) {
+
+        
+        <div class="row">
+
+          <span [appRendu]="assignment.rendu">{{ assignment.nom }}</span>
+          <span class="date">à rendre le {{ assignment.dateDeRendu }}</span>
+
+        </div>
+      }
+      
+
+  </mat-card-content>
+</mat-card>

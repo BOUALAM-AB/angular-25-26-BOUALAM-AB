@@ -1,0 +1,10 @@
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+.row:last-child { border-bottom: 0; }
+.date { opacity: 0.8; }
