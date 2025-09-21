@@ -1,53 +1,60 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=20614153&assignment_repo_type=AssignmentRepo)
-# Angular-start
-## Michel Buffa, Leo Donati, Université Côte d'Azur 
-Repository de démarrage pour vos TP de Angular
+# Assignment App - TP Angular (Rendu1)
 
-C'est dans ce repository que vous allez créer votre projet Angular qui va évoluer tout au long du semestre.
+##  Objectif du TP
+Implémenter les fonctionnalités demandées dans les transparents 55 → 83 du cours Angular :
+- utilisation d'Angular Material (toolbar, sidenav, cards, buttons, inputs)
+- création de plusieurs composants standalone
+- gestion du routing
+- data binding et formulaires
 
-Vous devez donc modifier ce README en ajoutant votre nom et l'avancement de votre projet, ainsi que d'éventuelles difficultés que vous avez eues ou des bonus que vous avez ajoutés par rapport à ce qui vous est demandé.
 
-* Si vous utilisez le github Codespace, alors dans votre machine virtuelle `npm`, `node` et `angular/CLI` sont déjà installés.
-* Pour cloner en local ce repository, il faut :
-   1. avoir installé `git` (ou `gitbash`) sur votre machine
-   1. créer un répertoire de travail et s'y déplacer
-   1. cloner le repository distant
+---
+
+##  Fonctionnalités implémentées
+
+### 1. Toolbar (barre supérieure)
+- Icône **maison** → retour à la page "Liste des devoirs"
+- Titre de l'application : *Assignment App*
+- Icône **person** → prévue pour la connexion plus tard
+
+### 2. Sidenav (menu latéral gauche)
+Avec des liens de navigation (routerLink) vers :
+- Liste des devoirs
+- Ajout d'un devoir
+- Modification d'un devoir
+- Suppression d'un devoir
+- Génération de données
+
+### 3. Routing
+- Configuration des routes Angular (`app.routes.ts`)
+- Navigation entre les pages via `<router-outlet>`
+
+### 4. Liste des devoirs
+- Affichage d'une liste de devoirs avec la nouvelle syntaxe Angular **@for** et **@if**
+- Utilisation d'une **directive custom `appRendu`** :
+  - Texte vert si le devoir est rendu
+  - Texte rouge sinon
+
+### 5. Ajout d'un devoir
+- Formulaire avec Angular Material (`MatFormField`, `MatInput`, `MatButton`)
+- Utilisation du **data binding** :
+  - `[disabled]` → désactive le bouton si les champs sont vides
+  - `(submit)` → exécute la méthode `onSubmit()`
+  - `[(ngModel)]` → lie directement les champs au TS
+- À ce stade, le devoir saisi est simplement affiché dans la console (pas encore relié à la liste car il n'ya pas de backend )
+
+### 6. Autres pages
+- Modification, Suppression, Génération de données : composants créés et intégrés au routing, contenus encore à implémenter.
+
+---
+
+##  Technologies utilisées
+- Angular 20 (standalone components + nouvelles directives @for/@if)
+- Angular Material (Toolbar, Sidenav, Buttons, Inputs, Cards)
+
+---
+
+##  Lancer le projet
 ```bash
-git clone nom-du-repository
-```
-
-
-
-### Pour vérifier que l'installation est complète
-
-```bash 
-npm --version
-node --version
-ng version
-```
-
-### Chaque fois que vous modifiez votre code 
-
-```bash
-git pull            #pour synchroniser votre repo local avec le repo de github 
-git add -A          #pour informer git de suivre tous les fichiers présents dans le répertoire
-git commit -m "message descriptif"      #pour intégrer dans git les dernières modifications faites     
-git push            #pour synchroniser le repo github avec le repo local
-```
-
-### Pour ajouter un tag (une étiquette) à l'état courant du repository sur github
-
-Une étiquette TPXX doit être ajoutée à la fin de chaque séance de TP pour voir l'évolution progressif de votre travail.
-
-```bash
-git tag NomEtiquette
-git push --tags
-```
-
-
-
-
-
-
-
-
+npm install
+ng serve
