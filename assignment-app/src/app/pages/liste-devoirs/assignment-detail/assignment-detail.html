@@ -1,0 +1,17 @@
+    @if (assignment) {
+  <mat-card appearance="outlined">
+    <mat-card-header><mat-card-title>Détails</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <p><b>Nom :</b> {{ assignment.nom }}</p>
+      <p><b>Date de rendu :</b> {{ assignment.dateDeRendu | date }}</p>
+      <p><b>État :</b> {{ assignment.rendu ? 'Rendu' : 'Non rendu' }}</p>
+
+      @if (!assignment.rendu) {
+        <mat-checkbox (change)="markRendu()">Marquer comme rendu</mat-checkbox>
+      }
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="warn" (click)="deleteRequest.emit(assignment)">Supprimer</button>
+    </mat-card-actions>
+  </mat-card>
+}

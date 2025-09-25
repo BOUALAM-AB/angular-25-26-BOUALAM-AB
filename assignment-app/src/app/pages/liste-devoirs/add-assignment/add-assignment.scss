@@ -1,0 +1,7 @@
+.form {
+  display: grid;
+  grid-template-columns: 1fr 220px auto;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+}

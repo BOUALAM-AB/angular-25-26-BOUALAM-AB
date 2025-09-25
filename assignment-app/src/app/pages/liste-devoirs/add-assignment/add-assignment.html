@@ -1,0 +1,16 @@
+<mat-card appearance="outlined">
+  <mat-card-header><mat-card-title>Ajout d'un Assignment</mat-card-title></mat-card-header>
+  <mat-card-content>
+    <form class="form" (submit)="submit()">
+      <mat-form-field appearance="outline">
+        <input matInput placeholder="Nom de l'assignment" [(ngModel)]="nom" name="nom" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <input matInput type="date" placeholder="Date de rendu" [(ngModel)]="date" name="date" />
+      </mat-form-field>
+
+      <button mat-stroked-button color="primary" type="submit" [disabled]="disabled">Ajouter</button>
+    </form>
+  </mat-card-content>
+</mat-card>
