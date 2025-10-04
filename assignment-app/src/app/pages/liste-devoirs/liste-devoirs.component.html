@@ -5,33 +5,37 @@
 
   <mat-card-content>
 
-    <!-- Bouton "Ajouter Assignment" (slides 105–107) -->
     @if (!formVisible) {
-      <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+      <div class="actions">
         <button mat-flat-button color="accent" (click)="onAddAssignmentBtnClick()">
           Ajouter Assignment
         </button>
       </div>
     }
 
-    <!-- Alterner Formulaire vs Liste (slides 106–107) -->
     @if (formVisible) {
 
-      <!-- Fils formulaire (slides 99–103) : émet (create) (slides 108–109) -->
       <app-add-assignment (create)="onAssignmentCreated($event)"></app-add-assignment>
 
     } @else {
 
-      <!-- Liste cliquable (slides 88–90) -->
       <mat-list>
         @for (a of assignments; track a.id) {
-          <mat-list-item (click)="assignmentClique(a)">
-            <div style="display:grid; grid-template-columns: 1fr auto; width:100%; align-items:center;">
-              <div>
-                <div style="font-weight:600;">{{ a.nom }}</div>
-                <small>À rendre le : {{ a.dateDeRendu | date }}</small> <!-- pipe date (slide 89) -->
+          <mat-list-item
+            (click)="assignmentClique(a)"
+            class="item"
+            [class.selected]="isSelected(a)"
+            [attr.aria-selected]="isSelected(a)"
+          >
+            <div class="row">
+              <div class="left">
+                <div class="name">
+                  <mat-icon *ngIf="isSelected(a)" inline>chevron_right</mat-icon>
+                  {{ a.nom }}
+                </div>
+                <small>À rendre le : {{ a.dateDeRendu | date }}</small>
               </div>
-              <span [style.color]="a.rendu ? 'green' : 'red'">
+              <span class="etat" [class.rendu]="a.rendu">
                 {{ a.rendu ? 'Rendu' : 'Non rendu' }}
               </span>
             </div>
@@ -40,9 +44,8 @@
         }
       </mat-list>
 
-      <!-- Détail sous la liste (slides 95–98 + exercice 113) -->
       @if (assignmentSelectionne) {
-        <div style="margin-top:12px;">
+        <div class="detail">
           <app-assignment-detail
             [assignment]="assignmentSelectionne"
             (rendu)="onAssignmentRendu($event)"

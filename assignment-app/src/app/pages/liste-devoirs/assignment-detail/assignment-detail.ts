@@ -3,7 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
-import type { Assignment } from '../liste-devoirs.component';
+import type { Assignment } from '../../../model/assignment.model';
 
 @Component({
   selector: 'app-assignment-detail',
