@@ -2,7 +2,7 @@
 
 ##  Objectif du TP
 
-Avancer le projet Angular en suivant les transparents **149 → 188** du cours :  
+Avancer le projet Angular en suivant les transparents **149 → 188** du cours  
 implémentation du **routage**, des **routes protégées**, et d’un **menu latéral réactif** avec Angular Material.
 
 ---
@@ -95,7 +95,8 @@ implémentation du **routage**, des **routes protégées**, et d’un **menu lat
 
 ###  `GenerationDonneesComponent`
 - Composant “squelette” prévu pour la génération de données de test
-- Servira à créer rapidement plusieurs devoirs simulés
+- Servira à créer rapidement plusieurs devoirs simulés 
+
 
 ---
 
