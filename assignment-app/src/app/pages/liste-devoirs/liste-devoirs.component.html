@@ -4,55 +4,32 @@
   </mat-card-header>
 
   <mat-card-content>
+    <div class="actions">
+      <button mat-flat-button color="accent" routerLink="/add">
+        Ajouter Assignment
+      </button>
+    </div>
 
-    @if (!formVisible) {
-      <div class="actions">
-        <button mat-flat-button color="accent" (click)="onAddAssignmentBtnClick()">
-          Ajouter Assignment
-        </button>
-      </div>
-    }
-
-    @if (formVisible) {
-
-      <app-add-assignment (create)="onAssignmentCreated($event)"></app-add-assignment>
-
-    } @else {
-
-      <mat-list>
-        @for (a of assignments; track a.id) {
-          <mat-list-item
-            (click)="assignmentClique(a)"
-            class="item"
-            [class.selected]="isSelected(a)"
-            [attr.aria-selected]="isSelected(a)"
-          >
-            <div class="row">
-              <div class="left">
-                <div class="name">
-                  <mat-icon *ngIf="isSelected(a)" inline>chevron_right</mat-icon>
-                  {{ a.nom }}
-                </div>
-                <small>À rendre le : {{ a.dateDeRendu | date }}</small>
-              </div>
-              <span class="etat" [class.rendu]="a.rendu">
-                {{ a.rendu ? 'Rendu' : 'Non rendu' }}
-              </span>
+    <mat-list>
+      @for (a of assignments; track a.id) {
+        <mat-list-item
+          class="item"
+          [routerLink]="['/assignment', a.id]"
+          routerLinkActive="selected"
+          [attr.aria-selected]="false"
+        >
+          <div class="row">
+            <div class="left">
+              <div class="name">{{ a.nom }}</div>
+              <small>À rendre le : {{ a.dateDeRendu | date }}</small>
             </div>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-        }
-      </mat-list>
-
-      @if (assignmentSelectionne) {
-        <div class="detail">
-          <app-assignment-detail
-            [assignment]="assignmentSelectionne"
-            (rendu)="onAssignmentRendu($event)"
-            (deleteRequest)="onDelete($event)">
-          </app-assignment-detail>
-        </div>
+            <span class="etat" [class.rendu]="a.rendu">
+              {{ a.rendu ? 'Rendu' : 'Non rendu' }}
+            </span>
+          </div>
+        </mat-list-item>
+        <mat-divider></mat-divider>
       }
-    }
+    </mat-list>
   </mat-card-content>
 </mat-card>

@@ -10,8 +10,18 @@
         <mat-checkbox (change)="markRendu()">Marquer comme rendu</mat-checkbox>
       }
     </mat-card-content>
+
     <mat-card-actions>
-      <button mat-raised-button color="warn" (click)="deleteRequest.emit(assignment)">Supprimer</button>
+      
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="!auth.isAdmin()"
+        (click)="goEdit()">
+        EDIT
+      </button>
+
+      <button mat-raised-button color="warn" (click)="onDelete()">Supprimer</button>
     </mat-card-actions>
   </mat-card>
 }

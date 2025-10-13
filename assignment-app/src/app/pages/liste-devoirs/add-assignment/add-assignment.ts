@@ -1,30 +1,44 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { Router } from '@angular/router';
+
+import { AssignmentsService } from '../../../service/assignments.service';
+import { Assignment } from '../../../model/assignment.model';
 
 @Component({
   selector: 'app-add-assignment',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule],
+  imports: [
+    CommonModule, FormsModule,
+    MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule,
+    MatDatepickerModule, MatNativeDateModule
+  ],
   templateUrl: './add-assignment.html',
-  styleUrl: './add-assignment.scss'
+  styleUrls: ['./add-assignment.scss']
 })
 export class AddAssignment {
-  @Output() create = new EventEmitter<{ nom: string; dateDeRendu: string }>();
-
   nom = '';
-  date = '';
+  date: Date | null = null;
+
+  constructor(private svc: AssignmentsService, private router: Router) {}
 
   get disabled() { return !(this.nom.trim() && this.date); }
 
-  submit() {
+  onSubmit() {
     if (this.disabled) return;
-    this.create.emit({ nom: this.nom.trim(), dateDeRendu: this.date });
-    this.nom = '';
-    this.date = '';
+    const a: Assignment = {
+      id: 0,
+      nom: this.nom.trim(),
+      dateDeRendu: this.date!, 
+      rendu: false
+    };
+    this.svc.addAssignment(a).subscribe(() => this.router.navigate(['/home']));
   }
 }

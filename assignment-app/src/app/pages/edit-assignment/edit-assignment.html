@@ -1,0 +1,35 @@
+@if (assignment) {
+  <mat-card appearance="outlined" class="card-edit">
+    <mat-card-header>
+      <mat-card-title>Éditer l’assignment</mat-card-title>
+      <mat-card-subtitle>#{{ assignment.id }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form (submit)="onSave()" class="form-edit">
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Nom</mat-label>
+          <input matInput [(ngModel)]="assignment.nom" name="nom" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Date de rendu</mat-label>
+          <input
+            matInput
+            type="date"
+            [ngModel]="toInputDate(assignment.dateDeRendu)"
+            (ngModelChange)="onDateChange($event)"
+            name="date"
+            required
+          />
+        
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-stroked-button type="button" (click)="onCancel()">Annuler</button>
+          <button mat-raised-button color="primary" type="submit">Sauver</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+}

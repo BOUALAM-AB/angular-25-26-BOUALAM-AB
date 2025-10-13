@@ -1,13 +1,16 @@
 <mat-card appearance="outlined">
   <mat-card-header><mat-card-title>Ajout d'un Assignment</mat-card-title></mat-card-header>
   <mat-card-content>
-    <form class="form" (submit)="submit()">
+    <form class="form" (submit)="onSubmit()">
       <mat-form-field appearance="outline">
         <input matInput placeholder="Nom de l'assignment" [(ngModel)]="nom" name="nom" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <input matInput type="date" placeholder="Date de rendu" [(ngModel)]="date" name="date" />
+        <input matInput [matDatepicker]="picker" placeholder="Date de rendu"
+               [(ngModel)]="date" name="date" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
 
       <button mat-stroked-button color="primary" type="submit" [disabled]="disabled">Ajouter</button>

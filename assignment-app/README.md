@@ -1,57 +1,101 @@
-# Assignment App - TP Angular (Rendu3)
+#  Assignment App – TP Angular (Rendu 4)
 
-## Objectif du TP
-Implémenter les fonctionnalités demandées dans les transparents **116 → 148** du cours Angular :
-- Création et injection de **services Angular**
-- Utilisation des **Observables** pour la gestion des données
-- Mise en place d’un **LoggingService** (service dans un service)
-- Appels asynchrones simulés avec `of()`
-- Réorganisation du code pour respecter la structure **composants ↔ services**
+##  Objectif du TP
+
+Avancer le projet Angular en suivant les transparents **149 → 188** du cours :  
+implémentation du **routage**, des **routes protégées**, et d’un **menu latéral réactif** avec Angular Material.
 
 ---
 
-## Fonctionnalités implémentées
+##  Fonctionnalités implémentées
 
-### 1. Service `AssignmentsService`
-- Créé dans `src/app/service/assignments.service.ts`
-- Contient un tableau local de devoirs :
+### 1. Routage Angular
+- Configuration dans `app.routes.ts` avec les chemins :
+  - `/home` → liste des devoirs
+  - `/add` → ajout d’un devoir
+  - `/assignment/:id` → détails d’un devoir
+  - `/assignment/:id/edit` → édition d’un devoir
+  - `/generation` → génération de données
+- Redirection par défaut (`path: '', redirectTo: 'home'`)
+- Route d’édition protégée par un **authGuard**.
+
+### 2. Services
+- **`AssignmentsService`**
+  - Contient un tableau local d’`Assignment` (simulation sans backend)
+  - Fournit les méthodes CRUD :
+    - `getAssignments()` / `getAssignment(id)`
+    - `addAssignment()`
+    - `updateAssignment()`
+    - `deleteAssignment()`
+  - Retourne des **Observables** simulées avec `of()`
+  - Appelle `LoggingService` pour afficher les actions dans la console
+
+- **`LoggingService`**
+  - Service simple qui trace les opérations (`ajout`, `update`, `delete`) dans la console
+
+- **`AuthService`**
+  - Simule une authentification **utilisateur / administrateur**
+  - Permet de tester les routes protégées et l’état du bouton **EDIT**
+  - Méthodes :
+    - `loginAsUser()`
+    - `loginAsAdmin()`
+    - `logout()`
+    - `isLogged()`
+    - `isAdmin()`
+
+### 3. Guard `authGuard`
+- Bloque l’accès à `/assignment/:id/edit` si l’utilisateur n’est pas **admin**
+- Redirige vers `/home`
+- Exemple :
   ```ts
-  private assignments = [
-    { id: 1, nom: 'Devoir Angular', dateDeRendu: new Date('2025-09-30'), rendu: true },
-    { id: 2, nom: 'Devoir Math', dateDeRendu: new Date('2025-10-05'), rendu: false }
-  ];
-  ```
-- **Méthodes CRUD :**
-  - `getAssignments()` → renvoie la liste (Observable)
-  - `getAssignment(id)` → renvoie un devoir précis
-  - `addAssignment(a)` → ajoute un devoir
-  - `updateAssignment(a)` → met à jour un devoir
-  - `deleteAssignment(a)` → supprime un devoir
-- Retourne les données via `of(...)` pour simuler un backend asynchrone.
+  export const authGuard: CanActivateFn = () => {
+    const auth = inject(AuthService);
+    const router = inject(Router);
+    if (auth.isLogged() && auth.isAdmin()) return true;
+    router.navigate(['/home']);
+    return false;
+  };
+
+##  Composants principaux
+
+###  `ListeDevoirsComponent`
+- Affiche la liste des devoirs avec **Angular Material (`MatList`)**
+- Permet la **sélection d’un devoir** pour afficher ses détails
+- Bouton **“Ajouter Assignment”** → ouvre le formulaire d’ajout
+- Communication **Parent ↔ Enfant** via des événements :
+  - `(create)` → ajoute un nouveau devoir
+  - `(rendu)` → marque un devoir comme rendu
+  - `(deleteRequest)` → supprime un devoir
 
 ---
 
-### 2. Service `LoggingService`
-- Permet de tracer les opérations effectuées :
-  ```ts
-  console.log(`assignment ${nom} ${action}`);
-  ```
-- Injecté dans `AssignmentsService` (démonstration d’un service dans un service).
-
+###  `AddAssignment`
+- Formulaire d’ajout avec **liaison bidirectionnelle** `[(ngModel)]` pour le nom et la date
+- Sur **soumission du formulaire (`(submit)`)**, émet un événement `(create)` vers le parent
+- Le **bouton “Ajouter”** est **désactivé** tant que les champs sont vides
 
 ---
 
-### 3. Composants utilisés
-- `AddAssignment` → formulaire d’ajout  
-- `AssignmentDetail` → affichage des détails + suppression/rendu  
-- `ListeDevoirsComponent` → composant principal  
-- Tous les composants sont **standalone** et utilisent **Angular Material** (`MatCard`, `MatList`, `MatButton`, etc.)
+###  `AssignmentDetail`
+- Affiche les **informations détaillées** du devoir sélectionné
+- Si le devoir **n’est pas rendu** → bouton “Marquer comme rendu”
+- Si **l’utilisateur admin** est connecté → bouton **EDIT** actif  
+  Sinon → bouton **EDIT** **désactivé (grisé)**
+- Bouton **Supprimer** pour retirer le devoir sélectionné
 
 ---
 
-## Technologies utilisées
-- **Angular 20** (standalone components + nouvelles directives `@for`, `@if`)
-- **Angular Material** (cards, lists, inputs, buttons, checkbox)
+###  `EditAssignmentComponent`
+- Formulaire **pré-rempli** pour modifier un devoir existant
+- Bouton **Sauver** met à jour le devoir via `AssignmentsService`
+- Après sauvegarde → **redirection automatique vers `/home`**
+- Route **protégée** par le `authGuard` (accessible uniquement aux administrateurs)
+
+---
+
+###  `GenerationDonneesComponent`
+- Composant “squelette” prévu pour la génération de données de test
+- Servira à créer rapidement plusieurs devoirs simulés
 
 ---
 

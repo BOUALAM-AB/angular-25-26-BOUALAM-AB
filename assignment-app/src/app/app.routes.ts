@@ -1,16 +1,20 @@
 import { Routes } from '@angular/router';
+
 import { ListeDevoirsComponent } from './pages/liste-devoirs/liste-devoirs.component';
-import { AjoutDevoirComponent } from './pages/ajout-devoir/ajout-devoir.component';
-import { ModificationDevoirComponent } from './pages/modification-devoir/modification-devoir.component';
-import { SuppressionDevoirComponent } from './pages/suppression-devoir/suppression-devoir.component';
-import { GenerationDonneesComponent } from './pages/generation-donnees/generation-donnees.component';
+import { AddAssignment } from './pages/liste-devoirs/add-assignment/add-assignment';
+import { AssignmentDetail } from './pages/liste-devoirs/assignment-detail/assignment-detail';
+import { EditAssignmentComponent } from './pages/edit-assignment/edit-assignment';
+import { authGuard } from './service/auth.guard';
+
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'devoirs', pathMatch: 'full' },
-  { path: 'devoirs', component: ListeDevoirsComponent },
-  { path: 'ajout', component: AjoutDevoirComponent },
-  { path: 'modification', component: ModificationDevoirComponent },
-  { path: 'suppression', component: SuppressionDevoirComponent },
-  { path: 'generation', component: GenerationDonneesComponent },
-  { path: '**', redirectTo: 'devoirs' }
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+
+  { path: 'home', component: ListeDevoirsComponent },
+  { path: 'add', component: AddAssignment },
+
+  { path: 'assignment/:id', component: AssignmentDetail },
+  { path: 'assignment/:id/edit', component: EditAssignmentComponent, canActivate: [authGuard] },
+
+  { path: '**', redirectTo: 'home' }
 ];
