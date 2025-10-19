@@ -10,7 +10,7 @@
       </button>
       <button mat-stroked-button color="primary" (click)="seed()">PeuplerBD</button>
     </div>
-<!-- liste-devoirs.component.html -->
+
 <mat-nav-list>
   @for (a of (vm$ | async) ?? []; track a.id) {
     <a mat-list-item
@@ -35,7 +35,7 @@
 
   </mat-card-content>
   
-  <!-- Pagination simple -->
+ 
 <div class="pager">
   <button mat-button (click)="first()" [disabled]="page === 1">« Première</button>
   <button mat-button (click)="prev()"  [disabled]="!hasPrevPage">‹ Précédente</button>

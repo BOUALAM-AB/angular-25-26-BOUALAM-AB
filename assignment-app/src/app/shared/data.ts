@@ -1,4 +1,4 @@
-// ⚠️ Exemple : remplace/complète par 500 entrées
+
 export const bdInitialAssignments = [
     
 {"id":21,"dateDeRendu":"7/17/2025","nom":"aliquet ultrices erat tortor sollicitudin mi sit amet lobortis sapien sapien non","rendu":true},

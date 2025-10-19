@@ -13,7 +13,7 @@ import { Assignment } from '../../model/assignment.model';
 @Component({
   selector: 'app-edit-assignment',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,  // perf
+  changeDetection: ChangeDetectionStrategy.OnPush,  
   imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule],
   templateUrl: './edit-assignment.html',
   styleUrls: ['./edit-assignment.scss']
@@ -32,8 +32,8 @@ export class EditAssignmentComponent {
     const nav = this.router.getCurrentNavigation();
     const fromState = nav?.extras?.state as { prefetched?: Assignment } | undefined;
     if (fromState?.prefetched) {
-      this.setModel(fromState.prefetched);     // instantané
-      this.svc.prefetch(fromState.prefetched.id!); // refresh
+      this.setModel(fromState.prefetched);     
+      this.svc.prefetch(fromState.prefetched.id!); 
       return;
     }
 

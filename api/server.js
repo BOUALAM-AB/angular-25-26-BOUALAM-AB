@@ -7,7 +7,7 @@ let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 mongoose.set('debug', true);
 
-// remplacer toute cette chaine par l'URI de connexion à votre propre base dans le cloud s
+
 const uri = 'mongodb+srv://boualam:ABDE25MIAGE@cluster.vzap3fs.mongodb.net/assignments?retryWrites=true&w=majority&appName=Cluster';
 
 

@@ -6,12 +6,11 @@ function getAssignments(req, res) {
   const limit = parseInt(req.query.limit) || 10;
 
   const aggregate = Assignment.aggregate([
-    { $sort: { id: 1 } } // tri stable par id
+    { $sort: { id: 1 } } 
   ]);
 
   Assignment.aggregatePaginate(aggregate, { page, limit }, (err, result) => {
     if (err) return res.status(500).send(err);
-    // result = { docs, totalDocs, limit, page, totalPages, hasPrevPage, hasNextPage, prevPage, nextPage, ... }
     res.json(result);
   });
 }
@@ -26,7 +25,7 @@ function getAssignment(req, res){
   });
 }
 
-// Ajout d'un assignment (POST)  ❗️NE PAS lire req.body.id
+// Ajout d'un assignment (POST)  
 function postAssignment(req, res){
   const assignment = new Assignment({
     nom: req.body.nom,
@@ -36,18 +35,16 @@ function postAssignment(req, res){
 
   assignment.save((err, saved) => {
     if (err) return res.status(500).send('cant post assignment');
-    // On renvoie l'objet créé (avec id auto)
     res.status(201).json(saved);
   });
 }
 
-// Update d'un assignment (PUT)  ✅ basé sur id (numérique)
+// Update d'un assignment (PUT) 
 function updateAssignment(req, res) {
   const id = Number(req.body.id);
   if (Number.isNaN(id)) {
     return res.status(400).json({ message: 'id (number) is required in body' });
   }
-  // On évite d’écraser _id et __v par inadvertance
   const { _id, __v, ...rest } = req.body;
 
   Assignment.findOneAndUpdate({ id }, rest, { new: true }, (err, assignment) => {
@@ -57,7 +54,7 @@ function updateAssignment(req, res) {
   });
 }
 
-// suppression d'un assignment (DELETE)  ✅ basé sur id + 404 propre
+// suppression d'un assignment (DELETE)  
 function deleteAssignment(req, res) {
   const id = Number(req.params.id);
   Assignment.findOneAndDelete({ id }, (err, assignment) => {
