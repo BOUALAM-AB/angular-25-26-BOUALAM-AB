@@ -34,11 +34,11 @@ export class AddAssignment {
   onSubmit() {
     if (this.disabled) return;
     const a: Assignment = {
-      id: 0,
+      
       nom: this.nom.trim(),
       dateDeRendu: this.date!, 
       rendu: false
-    };
+    }as any;
     this.svc.addAssignment(a).subscribe(() => this.router.navigate(['/home']));
   }
 }

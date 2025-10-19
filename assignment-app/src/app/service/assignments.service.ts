@@ -1,51 +1,130 @@
+// service/assignments.service.ts
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, of, tap, forkJoin } from 'rxjs';
 import { Assignment } from '../model/assignment.model';
-import { LoggingService } from './logging.service';
+import { bdInitialAssignments } from '../shared/data';
+import { PaginatedAssignments } from '../model/pagination.model';
+
 
 @Injectable({ providedIn: 'root' })
 export class AssignmentsService {
-  
-  private assignments: Assignment[] = [
-    { id: 1, nom: 'Devoir Angular', dateDeRendu: new Date('2025-09-30'), rendu: true },
-    { id: 2, nom: 'Devoir Math',    dateDeRendu: new Date('2025-10-05'), rendu: false },
-  ];
+  private base = 'http://localhost:8010/api/assignments';
 
-  constructor(private logger: LoggingService) {}
+  private _assignments = new BehaviorSubject<Assignment[]>([]);
+  readonly assignments$ = this._assignments.asObservable();
 
-  
-  getAssignments(): Observable<Assignment[]> {
-    return of(this.assignments);
+  // Index O(1) pour accès instantané
+  private _byId = new Map<number, Assignment>();
+
+  constructor(private http: HttpClient) {}
+
+  private normalizeDate(a: Assignment): Assignment {
+    return { ...a, dateDeRendu: new Date(a.dateDeRendu) } as Assignment;
   }
 
- 
-  getAssignment(id: number): Observable<Assignment | undefined> {
-    const found = this.assignments.find(a => a.id === id);
-    return of(found);
+  private indexAll(list: Assignment[]) {
+    this._byId.clear();
+    list.forEach(a => this._byId.set(a.id!, a));
   }
 
-  
-  addAssignment(a: Assignment): Observable<{message: string}> {
-    if (!a.id) {
-      const nextId = this.assignments.length ? Math.max(...this.assignments.map(x => x.id)) + 1 : 1;
-      a.id = nextId;
-    }
-    this.assignments.unshift(a);
-    this.logger.log(`${a.nom}`, 'ajout');
-    return of({ message: 'Assignment ajouté' });
+  loadAll(): void {
+    this.http.get<Assignment[]>(this.base)
+      .subscribe(list => {
+        const normalized = list.map(a => this.normalizeDate(a));
+        this._assignments.next(normalized);
+        this.indexAll(normalized);
+      });
   }
 
- 
-  updateAssignment(a: Assignment): Observable<{message: string}> {
-    this.assignments = this.assignments.map(x => x.id === a.id ? a : x);
-    this.logger.log(`${a.nom}`, 'update');
-    return of({ message: 'Assignment mis à jour' });
+  /** Accès immédiat si présent en cache */
+  getFromStore(id: number): Assignment | undefined {
+    return this._byId.get(id);
   }
 
-  
-  deleteAssignment(a: Assignment): Observable<{message: string}> {
-    this.assignments = this.assignments.filter(x => x.id !== a.id);
-    this.logger.log(`${a.nom}`, 'delete');
-    return of({ message: 'Assignment supprimé' });
+  /** Pré-chargement optionnel (ne casse pas l’UI si déjà en cache) */
+  prefetch(id: number) {
+    if (this._byId.has(id)) return;
+    this.http.get<Assignment>(`${this.base}/${id}`)
+      .subscribe(a => {
+        const n = this.normalizeDate(a);
+        this._byId.set(n.id!, n);
+        // Mettre à jour la liste (immutabilité)
+        const cur = this._assignments.value;
+        const exists = cur.some(x => x.id === n.id);
+        this._assignments.next(exists ? cur.map(x => x.id === n.id ? n : x) : [...cur, n]);
+      });
   }
+
+  /** Fallback HTTP si non présent */
+  getAssignment(id: number): Observable<Assignment> {
+    const cached = this.getFromStore(id);
+    if (cached) return of(cached);
+    return this.http.get<Assignment>(`${this.base}/${id}`).pipe(
+      tap(a => {
+        const n = this.normalizeDate(a);
+        this._byId.set(n.id!, n);
+        const cur = this._assignments.value;
+        const exists = cur.some(x => x.id === n.id);
+        this._assignments.next(exists ? cur.map(x => x.id === n.id ? n : x) : [...cur, n]);
+      })
+    );
+  }
+
+  addAssignment(a: Assignment): Observable<Assignment> {
+    const payload = { ...a, dateDeRendu: new Date(a.dateDeRendu).toISOString() };
+    return this.http.post<Assignment>(this.base, payload).pipe(
+      tap(newA => {
+        const n = this.normalizeDate(newA);
+        this._byId.set(n.id!, n);
+        const cur = this._assignments.value;
+        this._assignments.next([...cur, n]);
+      })
+    );
+  }
+
+  updateAssignment(a: Assignment): Observable<{message:string; assignment:Assignment}> {
+    const payload = { ...a, dateDeRendu: new Date(a.dateDeRendu).toISOString() };
+    return this.http.put<{message:string; assignment:Assignment}>(this.base, payload).pipe(
+      tap(res => {
+        const n = this.normalizeDate(res.assignment);
+        this._byId.set(n.id!, n);
+        const cur = this._assignments.value;
+        const upd = cur.map(x => x.id === n.id ? n : x);
+        this._assignments.next(upd);
+      })
+    );
+  }
+
+  deleteAssignmentById(id: number): Observable<any> {
+    return this.http.delete(`${this.base}/${id}`).pipe(
+      tap(() => {
+        this._byId.delete(id);
+        const cur = this._assignments.value;
+        this._assignments.next(cur.filter(x => x.id !== id));
+      })
+    );
+  }
+
+
+peuplerBDAvecForkJoin(): Observable<any> {
+  const calls = bdInitialAssignments.map(a => this.addAssignment({
+    id: a.id, nom: a.nom, dateDeRendu: new Date(a.dateDeRendu), rendu: !!a.rendu
+  }));
+  return forkJoin(calls);
+}
+
+
+getAssignmentsPage(page: number, limit: number): Observable<PaginatedAssignments> {
+  return this.http.get<PaginatedAssignments>(`${this.base}?page=${page}&limit=${limit}`).pipe(
+    tap(data => {
+      // on normalise et on met à jour le cache de la liste visible
+      const normalized = data.docs.map(a => this.normalizeDate(a));
+      this._assignments.next(normalized);
+      this.indexAll(normalized);
+    })
+  );
+}
+
+
 }

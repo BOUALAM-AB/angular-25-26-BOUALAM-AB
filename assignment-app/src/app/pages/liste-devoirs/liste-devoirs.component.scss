@@ -41,3 +41,13 @@
   outline-offset: -2px;
 }
 
+
+.pager {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+

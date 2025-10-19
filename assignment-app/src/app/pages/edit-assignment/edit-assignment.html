@@ -17,12 +17,10 @@
           <input
             matInput
             type="date"
-            [ngModel]="toInputDate(assignment.dateDeRendu)"
-            (ngModelChange)="onDateChange($event)"
+            [(ngModel)]="dateInput"
             name="date"
             required
           />
-        
         </mat-form-field>
 
         <div class="actions">

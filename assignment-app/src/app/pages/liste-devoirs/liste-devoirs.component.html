@@ -8,28 +8,43 @@
       <button mat-flat-button color="accent" routerLink="/add">
         Ajouter Assignment
       </button>
+      <button mat-stroked-button color="primary" (click)="seed()">PeuplerBD</button>
     </div>
+<!-- liste-devoirs.component.html -->
+<mat-nav-list>
+  @for (a of (vm$ | async) ?? []; track a.id) {
+    <a mat-list-item
+       class="item"
+       [routerLink]="['/assignment', a.id]"
+       [state]="a"  
+       routerLinkActive="selected"
+       [routerLinkActiveOptions]="{ exact: true }">
+      <div class="row">
+        <div class="left">
+          <div class="name">{{ a.nom }}</div>
+          <small>À rendre le : {{ a.dateDeRendu | date }}</small>
+        </div>
+        <span class="etat" [class.rendu]="a.rendu">
+          {{ a.rendu ? 'Rendu' : 'Non rendu' }}
+        </span>
+      </div>
+    </a>
+    <mat-divider></mat-divider>
+  }
+</mat-nav-list>
 
-    <mat-list>
-      @for (a of assignments; track a.id) {
-        <mat-list-item
-          class="item"
-          [routerLink]="['/assignment', a.id]"
-          routerLinkActive="selected"
-          [attr.aria-selected]="false"
-        >
-          <div class="row">
-            <div class="left">
-              <div class="name">{{ a.nom }}</div>
-              <small>À rendre le : {{ a.dateDeRendu | date }}</small>
-            </div>
-            <span class="etat" [class.rendu]="a.rendu">
-              {{ a.rendu ? 'Rendu' : 'Non rendu' }}
-            </span>
-          </div>
-        </mat-list-item>
-        <mat-divider></mat-divider>
-      }
-    </mat-list>
   </mat-card-content>
+  
+  <!-- Pagination simple -->
+<div class="pager">
+  <button mat-button (click)="first()" [disabled]="page === 1">« Première</button>
+  <button mat-button (click)="prev()"  [disabled]="!hasPrevPage">‹ Précédente</button>
+
+  <span>Page {{ page }} / {{ totalPages }}</span>
+  <span>• {{ totalDocs }} éléments</span>
+
+  <button mat-button (click)="next()" [disabled]="!hasNextPage">Suivante ›</button>
+  <button mat-button (click)="last()" [disabled]="page === totalPages">Dernière »</button>
+</div>
+
 </mat-card>
