@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
@@ -37,24 +37,21 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrls: ['./liste-devoirs.component.scss'],
 })
 export class ListeDevoirsComponent implements OnInit {
-  constructor(private svc: AssignmentsService) {}
+  constructor(
+    private svc: AssignmentsService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-
+  // --- Données en mémoire ---
   private allAssignments: Assignment[] = [];
-
-
   private filteredAssignments: Assignment[] = [];
-
-
   pageAssignments: Assignment[] = [];
 
-
+  // --- Filtres ---
   searchTerm = '';
-
-
   statusFilter: 'all' | 'rendu' | 'non-rendu' = 'all';
 
-
+  // --- Pagination ---
   page = 1;
   limit = 10;
   totalDocs = 0;
@@ -63,28 +60,47 @@ export class ListeDevoirsComponent implements OnInit {
   hasPrevPage = false;
   hasNextPage = false;
 
+
+  isLoading = false;
+
   ngOnInit(): void {
     this.fetchAll();
   }
 
-
   private fetchAll() {
+    this.isLoading = true;
+    this.cdr.markForCheck(); // on prévient Angular
+
     // on demande une page 1 très large (10000) pour tout récupérer
-    this.svc.getAssignmentsPage(1, 10000).subscribe((meta: any) => {
-      const list = Array.isArray(meta?.docs)
-        ? meta.docs
-        : Array.isArray(meta)
-          ? meta
-          : [];
+    this.svc.getAssignmentsPage(1, 10000).subscribe({
+      next: (meta: any) => {
+        const list = Array.isArray(meta?.docs)
+          ? meta.docs
+          : Array.isArray(meta)
+            ? meta
+            : [];
 
-      this.allAssignments = list;
-      this.totalDocs = meta?.totalDocs ?? list.length;
+        this.allAssignments = list;
+        this.totalDocs = meta?.totalDocs ?? list.length;
 
-      this.page = 1;
-      this.applyFiltersAndPagination();
+        this.page = 1;
+        this.applyFiltersAndPagination();
+        this.isLoading = false;
+
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error(' Erreur lors du chargement des assignments', err);
+        this.allAssignments = [];
+        this.totalDocs = 0;
+        this.totalFiltered = 0;
+        this.pageAssignments = [];
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
-
 
   private applyFiltersAndPagination() {
     let res = [...this.allAssignments];
@@ -121,13 +137,14 @@ export class ListeDevoirsComponent implements OnInit {
   onFiltersChanged() {
     this.page = 1;
     this.applyFiltersAndPagination();
+    this.cdr.detectChanges();
   }
-
 
   first() {
     if (this.page !== 1) {
       this.page = 1;
       this.applyFiltersAndPagination();
+      this.cdr.detectChanges();
     }
   }
 
@@ -135,6 +152,7 @@ export class ListeDevoirsComponent implements OnInit {
     if (this.hasPrevPage) {
       this.page--;
       this.applyFiltersAndPagination();
+      this.cdr.detectChanges();
     }
   }
 
@@ -142,6 +160,7 @@ export class ListeDevoirsComponent implements OnInit {
     if (this.hasNextPage) {
       this.page++;
       this.applyFiltersAndPagination();
+      this.cdr.detectChanges();
     }
   }
 
@@ -149,10 +168,14 @@ export class ListeDevoirsComponent implements OnInit {
     if (this.page !== this.totalPages) {
       this.page = this.totalPages;
       this.applyFiltersAndPagination();
+      this.cdr.detectChanges();
     }
   }
 
   seed() {
+    this.isLoading = true;
+    this.cdr.markForCheck();
+
     this.svc.peuplerBDAvecForkJoin().subscribe(() => {
       this.fetchAll();
     });

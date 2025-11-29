@@ -9,7 +9,8 @@ import { PaginatedAssignments } from '../model/pagination.model';
 
 @Injectable({ providedIn: 'root' })
 export class AssignmentsService {
-  private base = 'http://localhost:8010/api/assignments';
+  private base = 'https://assignment-api-keti.onrender.com/api/assignments';
+
 
   private _assignments = new BehaviorSubject<Assignment[]>([]);
   readonly assignments$ = this._assignments.asObservable();
@@ -42,21 +43,21 @@ export class AssignmentsService {
     return this._byId.get(id);
   }
 
-  
+
   prefetch(id: number) {
     if (this._byId.has(id)) return;
     this.http.get<Assignment>(`${this.base}/${id}`)
       .subscribe(a => {
         const n = this.normalizeDate(a);
         this._byId.set(n.id!, n);
-       
+
         const cur = this._assignments.value;
         const exists = cur.some(x => x.id === n.id);
         this._assignments.next(exists ? cur.map(x => x.id === n.id ? n : x) : [...cur, n]);
       });
   }
 
- 
+
   getAssignment(id: number): Observable<Assignment> {
     const cached = this.getFromStore(id);
     if (cached) return of(cached);
@@ -118,7 +119,7 @@ peuplerBDAvecForkJoin(): Observable<any> {
 getAssignmentsPage(page: number, limit: number): Observable<PaginatedAssignments> {
   return this.http.get<PaginatedAssignments>(`${this.base}?page=${page}&limit=${limit}`).pipe(
     tap(data => {
-     
+
       const normalized = data.docs.map(a => this.normalizeDate(a));
       this._assignments.next(normalized);
       this.indexAll(normalized);
