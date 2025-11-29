@@ -11,7 +11,6 @@ Développer une application complète de **gestion de devoirs** (“Assignments 
 Ce projet reprend les différents TPs du cours *Programmation Web Angular* (Michel Buffa & Léo Donat) et ajoute les étapes finales :  
  **Peuplement de la base** et **Pagination complète (back + front)**.
 
-
 ---
 
 ##  Architecture générale
