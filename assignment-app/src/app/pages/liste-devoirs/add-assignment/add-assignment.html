@@ -1,21 +1,59 @@
-<mat-card appearance="outlined">
-  <mat-card-header><mat-card-title>Ajout d'un Assignment</mat-card-title></mat-card-header>
+<mat-card appearance="outlined" class="form-card">
+  <mat-card-header>
+    <mat-card-title>Ajout d'un assignment</mat-card-title>
+    <mat-card-subtitle>Créer un nouveau devoir à rendre</mat-card-subtitle>
+  </mat-card-header>
+
   <mat-card-content>
     <form class="form" (submit)="onSubmit()">
-      <mat-form-field appearance="outline">
-        <input matInput placeholder="Nom de l'assignment" [(ngModel)]="nom" name="nom" />
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Nom de l'assignment</mat-label>
+        <input
+          matInput
+          placeholder="Ex : TP Angular – Composants"
+          [(ngModel)]="nom"
+          name="nom"
+          required
+        />
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <input matInput [matDatepicker]="picker" placeholder="Date de rendu"
-               [(ngModel)]="date" name="date" />
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Date de rendu</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          placeholder="Choisir une date"
+          [(ngModel)]="date"
+          name="date"
+          required
+        />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
-        
       </mat-form-field>
 
-      <button mat-stroked-button color="primary" type="submit" [disabled]="disabled">Ajouter</button>
+      <div class="form-actions">
+        <span class="hint">
+          <mat-icon>info</mat-icon>
+          <span>Tous les champs sont obligatoires.</span>
+        </span>
+        <span class="spacer"></span>
+        <button
+          mat-stroked-button
+          type="reset"
+          (click)="nom = ''; date = undefined"
+        >
+          Réinitialiser
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="disabled"
+        >
+          <mat-icon>check</mat-icon>
+          Ajouter
+        </button>
+      </div>
     </form>
   </mat-card-content>
 </mat-card>
-

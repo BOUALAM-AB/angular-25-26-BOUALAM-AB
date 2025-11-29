@@ -1,11 +1,13 @@
-// edit-assignment.component.ts
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon'; // ✅ le bon import
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { AssignmentsService } from '../../service/assignments.service';
 import { Assignment } from '../../model/assignment.model';
@@ -13,10 +15,18 @@ import { Assignment } from '../../model/assignment.model';
 @Component({
   selector: 'app-edit-assignment',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,  
-  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule, // ✅ on importe le module pour <mat-icon>
+  ],
   templateUrl: './edit-assignment.html',
-  styleUrls: ['./edit-assignment.scss']
+  styleUrls: ['./edit-assignment.scss'],
 })
 export class EditAssignmentComponent {
   assignment?: Assignment;
@@ -31,14 +41,16 @@ export class EditAssignmentComponent {
   ngOnInit() {
     const nav = this.router.getCurrentNavigation();
     const fromState = nav?.extras?.state as { prefetched?: Assignment } | undefined;
+
     if (fromState?.prefetched) {
-      this.setModel(fromState.prefetched);     
-      this.svc.prefetch(fromState.prefetched.id!); 
+      this.setModel(fromState.prefetched);
+      this.svc.prefetch(fromState.prefetched.id!);
       return;
     }
 
     const id = Number(this.route.snapshot.paramMap.get('id'));
     const cached = this.svc.getFromStore(id);
+
     if (cached) {
       this.setModel(cached);
       this.svc.prefetch(id);
@@ -56,13 +68,18 @@ export class EditAssignmentComponent {
   }
 
   onCancel() {
-    if (!this.assignment) { this.router.navigate(['/home']); return; }
+    if (!this.assignment) {
+      this.router.navigate(['/home']);
+      return;
+    }
     this.router.navigate(['/assignment', this.assignment.id]);
   }
 
   onSave() {
     if (!this.assignment) return;
     this.assignment.dateDeRendu = new Date(this.dateInput);
-    this.svc.updateAssignment(this.assignment).subscribe(() => this.router.navigate(['/home']));
+    this.svc
+      .updateAssignment(this.assignment)
+      .subscribe(() => this.router.navigate(['/home']));
   }
 }

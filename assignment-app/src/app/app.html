@@ -1,28 +1,49 @@
 <mat-sidenav-container class="layout" autosize #container>
- 
   <mat-sidenav
     mode="side"
     [opened]="true"
     class="sidenav"
+    [class.mini]="isCollapsed"
     [style.width.px]="isCollapsed ? 72 : 260"
   >
     <div class="brand-line">
       <mat-icon>assignment</mat-icon>
-      <span class="brand" *ngIf="!isCollapsed">Assignments</span>
+      <div class="brand-text" *ngIf="!isCollapsed">
+        <span class="brand">Assignment App</span>
+        <span class="subtitle">Dashboard étudiant</span>
+      </div>
     </div>
 
     <mat-nav-list>
-      <a mat-list-item routerLink="/home" routerLinkActive="active" matTooltip="Liste des devoirs" matTooltipPosition="right">
+      <a
+        mat-list-item
+        routerLink="/home"
+        routerLinkActive="active"
+        matTooltip="Liste des devoirs"
+        matTooltipPosition="right"
+      >
         <mat-icon>list</mat-icon>
         <span class="label" *ngIf="!isCollapsed">Liste des devoirs</span>
       </a>
 
-      <a mat-list-item routerLink="/add" routerLinkActive="active" matTooltip="Ajout d'un devoir" matTooltipPosition="right">
+      <a
+        mat-list-item
+        routerLink="/add"
+        routerLinkActive="active"
+        matTooltip="Ajout d'un devoir"
+        matTooltipPosition="right"
+      >
         <mat-icon>add</mat-icon>
         <span class="label" *ngIf="!isCollapsed">Ajout d'un devoir</span>
       </a>
 
-      <a mat-list-item routerLink="/generation" routerLinkActive="active" matTooltip="Génération de données" matTooltipPosition="right">
+      <a
+        mat-list-item
+        routerLink="/generation"
+        routerLinkActive="active"
+        matTooltip="Génération de données"
+        matTooltipPosition="right"
+      >
         <mat-icon>auto_awesome</mat-icon>
         <span class="label" *ngIf="!isCollapsed">Génération de données</span>
       </a>
@@ -30,19 +51,42 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <mat-toolbar color="primary" class="toolbar">
-      <button mat-icon-button (click)="toggleSidenav()" aria-label="Afficher/masquer le menu">
+    <mat-toolbar color="primary" class="toolbar" role="banner">
+      <button
+        mat-icon-button
+        (click)="toggleSidenav()"
+        aria-label="Afficher/masquer le menu"
+      >
         <mat-icon>{{ isCollapsed ? 'menu_open' : 'menu' }}</mat-icon>
       </button>
 
-      <button mat-icon-button routerLink="/home" aria-label="Accueil"><mat-icon>home</mat-icon></button>
-      <span class="title" *ngIf="!isCollapsed">Assignment App</span>
+      <button
+        mat-icon-button
+        routerLink="/home"
+        aria-label="Accueil"
+        class="home-btn"
+      >
+        <mat-icon>home</mat-icon>
+      </button>
+
+      <span class="title">Assignments</span>
       <span class="spacer"></span>
 
-      <button mat-stroked-button *ngIf="!auth.isLogged()" (click)="loginUser()">Login user</button>
-      <button mat-raised-button color="accent" *ngIf="!auth.isLogged()" (click)="loginAdmin()">Login admin</button>
-      <button mat-button *ngIf="auth.isLogged()" (click)="logout()">
-        <mat-icon>logout</mat-icon><span *ngIf="!isCollapsed">&nbsp;Logout</span>
+      <ng-container *ngIf="!auth.isLogged()">
+        <button mat-stroked-button (click)="loginUser()">Login user</button>
+        <button mat-raised-button color="accent" (click)="loginAdmin()">
+          Login admin
+        </button>
+      </ng-container>
+
+      <button
+        mat-button
+        *ngIf="auth.isLogged()"
+        (click)="logout()"
+        class="logout-btn"
+      >
+        <mat-icon>logout</mat-icon>
+        <span class="logout-label">Logout</span>
       </button>
     </mat-toolbar>
 

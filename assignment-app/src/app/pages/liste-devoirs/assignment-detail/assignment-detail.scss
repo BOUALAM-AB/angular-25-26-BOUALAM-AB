@@ -1,0 +1,108 @@
+.detail-card {
+  max-width: 720px;
+  margin: 20px auto;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+
+  mat-card-title {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  mat-card-subtitle {
+    font-size: 13px;
+    color: #64748b;
+  }
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  &--rendu {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  &--non-rendu {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+
+  .detail-block {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+
+    .label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94a3b8;
+    }
+
+    .value {
+      margin-top: 4px;
+      font-size: 14px;
+      color: #0f172a;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      mat-icon {
+        font-size: 18px;
+        color: #64748b;
+      }
+    }
+  }
+}
+
+.mark {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #eff6ff;
+  border: 1px dashed #93c5fd;
+}
+
+.detail-actions {
+  padding: 8px 16px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .spacer {
+    flex: 1;
+  }
+
+  button {
+    text-transform: none;
+    border-radius: 999px;
+
+    mat-icon {
+      margin-right: 4px;
+      font-size: 18px;
+    }
+  }
+}
+

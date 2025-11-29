@@ -1,50 +1,140 @@
-<mat-card appearance="outlined">
-  <mat-card-header>
-    <mat-card-title>Assignments</mat-card-title>
+<mat-card class="assignments-card" appearance="outlined">
+  <mat-card-header class="assignments-header">
+    <div class="header-row">
+      <div class="header-text">
+        <mat-card-title>Assignments</mat-card-title>
+        <mat-card-subtitle>
+          Vue d’ensemble de vos devoirs à rendre
+        </mat-card-subtitle>
+      </div>
+
+      <div class="header-actions">
+        <button mat-stroked-button color="primary" (click)="seed()">
+          <mat-icon>auto_awesome</mat-icon>
+          Peupler BD
+        </button>
+
+        <button mat-flat-button color="accent" routerLink="/add">
+          <mat-icon>add</mat-icon>
+          Nouvel assignment
+        </button>
+      </div>
+    </div>
+
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Rechercher</mat-label>
+        <input
+          matInput
+          placeholder="Nom de l'assignment"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onFiltersChanged()"
+        />
+
+        <button
+          *ngIf="searchTerm"
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="searchTerm = ''; onFiltersChanged()"
+          aria-label="Effacer la recherche"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Filtre</mat-label>
+        <mat-select [(ngModel)]="statusFilter" (selectionChange)="onFiltersChanged()">
+          <mat-option value="all">Tous</mat-option>
+          <mat-option value="rendu">Rendus</mat-option>
+          <mat-option value="non-rendu">Non rendus</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   </mat-card-header>
 
   <mat-card-content>
-    <div class="actions">
-      <button mat-flat-button color="accent" routerLink="/add">
-        Ajouter Assignment
-      </button>
-      <button mat-stroked-button color="primary" (click)="seed()">PeuplerBD</button>
+    <div class="summary-bar">
+      <div class="summary-item">
+        <span class="label">Page</span>
+        <span class="value">{{ page }} / {{ totalPages }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="label">Total</span>
+        <span class="value">{{ totalDocs }} éléments</span>
+      </div>
+      <div class="summary-item">
+        <span class="label">Filtrés</span>
+        <span class="value">{{ totalFiltered }} éléments</span>
+      </div>
+      <div class="summary-item hint">
+        <mat-icon>info</mat-icon>
+        <span>Cliquer sur un devoir pour voir les détails</span>
+      </div>
     </div>
 
-<mat-nav-list>
-  @for (a of (vm$ | async) ?? []; track a.id) {
-    <a mat-list-item
-       class="item"
-       [routerLink]="['/assignment', a.id]"
-       [state]="a"  
-       routerLinkActive="selected"
-       [routerLinkActiveOptions]="{ exact: true }">
-      <div class="row">
-        <div class="left">
-          <div class="name">{{ a.nom }}</div>
-          <small>À rendre le : {{ a.dateDeRendu | date }}</small>
-        </div>
-        <span class="etat" [class.rendu]="a.rendu">
-          {{ a.rendu ? 'Rendu' : 'Non rendu' }}
-        </span>
+    <mat-nav-list>
+      @for (a of pageAssignments; track a.id) {
+        <a
+          mat-list-item
+          class="item"
+          [routerLink]="['/assignment', a.id]"
+          [state]="a"
+          routerLinkActive="selected"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <div class="row">
+            <div class="left">
+              <div class="name">
+                <mat-icon class="bullet" [class.rendu]="a.rendu">book</mat-icon>
+                <span>{{ a.nom }}</span>
+              </div>
+              <small class="date">
+                <mat-icon>event</mat-icon>
+                <span>
+                  À rendre le : {{ a.dateDeRendu | date: 'EEEE d MMMM y' }}
+                </span>
+              </small>
+            </div>
+
+            <span class="etat" [class.rendu]="a.rendu">
+              {{ a.rendu ? 'Rendu' : 'Non rendu' }}
+            </span>
+          </div>
+        </a>
+        <mat-divider></mat-divider>
+      }
+    </mat-nav-list>
+
+    @if (totalDocs && totalFiltered === 0) {
+      <div class="empty">
+        Aucun assignment trouvé pour « {{ searchTerm }} » (filtre : {{ statusFilter
+        }}).
       </div>
-    </a>
-    <mat-divider></mat-divider>
-  }
-</mat-nav-list>
-
+    }
   </mat-card-content>
-  
- 
-<div class="pager">
-  <button mat-button (click)="first()" [disabled]="page === 1">« Première</button>
-  <button mat-button (click)="prev()"  [disabled]="!hasPrevPage">‹ Précédente</button>
 
-  <span>Page {{ page }} / {{ totalPages }}</span>
-  <span>• {{ totalDocs }} éléments</span>
+  <mat-divider></mat-divider>
 
-  <button mat-button (click)="next()" [disabled]="!hasNextPage">Suivante ›</button>
-  <button mat-button (click)="last()" [disabled]="page === totalPages">Dernière »</button>
-</div>
+  <div class="pager">
+    <button mat-button (click)="first()" [disabled]="page === 1">
+      « Première
+    </button>
+    <button mat-button (click)="prev()" [disabled]="!hasPrevPage">
+      ‹ Précédente
+    </button>
 
+    <span class="pager-info">Page {{ page }} / {{ totalPages }}</span>
+    <span class="pager-info">• {{ totalFiltered }} éléments filtrés</span>
+
+    <button mat-button (click)="next()" [disabled]="!hasNextPage">
+      Suivante ›
+    </button>
+    <button mat-button (click)="last()" [disabled]="page === totalPages">
+      Dernière »
+    </button>
+  </div>
 </mat-card>

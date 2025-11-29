@@ -1,15 +1,20 @@
 @if (assignment) {
-  <mat-card appearance="outlined" class="card-edit">
+  <mat-card appearance="outlined" class="form-card">
     <mat-card-header>
       <mat-card-title>Éditer l’assignment</mat-card-title>
       <mat-card-subtitle>#{{ assignment.id }}</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
-      <form (submit)="onSave()" class="form-edit">
+      <form (submit)="onSave()" class="form">
         <mat-form-field appearance="outline" class="field">
           <mat-label>Nom</mat-label>
-          <input matInput [(ngModel)]="assignment.nom" name="nom" required />
+          <input
+            matInput
+            [(ngModel)]="assignment.nom"
+            name="nom"
+            required
+          />
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="field">
@@ -23,9 +28,19 @@
           />
         </mat-form-field>
 
-        <div class="actions">
-          <button mat-stroked-button type="button" (click)="onCancel()">Annuler</button>
-          <button mat-raised-button color="primary" type="submit">Sauver</button>
+        <div class="form-actions">
+          <span class="hint">
+            <mat-icon>tips_and_updates</mat-icon>
+            <span>Vérifiez bien la date avant de sauvegarder.</span>
+          </span>
+          <span class="spacer"></span>
+          <button mat-stroked-button type="button" (click)="onCancel()">
+            Annuler
+          </button>
+          <button mat-raised-button color="primary" type="submit">
+            <mat-icon>save</mat-icon>
+            Sauver
+          </button>
         </div>
       </form>
     </mat-card-content>

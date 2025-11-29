@@ -1,27 +1,64 @@
 @if (assignment) {
-  <mat-card appearance="outlined">
-    <mat-card-header><mat-card-title>Détails</mat-card-title></mat-card-header>
+  <mat-card appearance="outlined" class="detail-card">
+    <mat-card-header>
+      <div class="detail-header">
+        <div>
+          <mat-card-title>{{ assignment.nom }}</mat-card-title>
+          <mat-card-subtitle>Détails de l’assignment #{{ assignment.id }}</mat-card-subtitle>
+        </div>
+
+        <span
+          class="badge"
+          [class.badge--rendu]="assignment.rendu"
+          [class.badge--non-rendu]="!assignment.rendu"
+        >
+          {{ assignment.rendu ? 'Rendu' : 'Non rendu' }}
+        </span>
+      </div>
+    </mat-card-header>
+
     <mat-card-content>
-      <p><b>Nom :</b> {{ assignment.nom }}</p>
-      <p><b>Date de rendu :</b> {{ assignment.dateDeRendu | date }}</p>
-      <p><b>État :</b> {{ assignment.rendu ? 'Rendu' : 'Non rendu' }}</p>
+      <div class="detail-grid">
+        <div class="detail-block">
+          <span class="label">Nom</span>
+          <span class="value">{{ assignment.nom }}</span>
+        </div>
+
+        <div class="detail-block">
+          <span class="label">Date de rendu</span>
+          <span class="value">
+            <mat-icon>event</mat-icon>
+            {{ assignment.dateDeRendu | date: 'EEEE d MMMM y' }}
+          </span>
+        </div>
+      </div>
 
       @if (!assignment.rendu) {
-        <mat-checkbox (change)="markRendu()">Marquer comme rendu</mat-checkbox>
+        <div class="mark">
+          <mat-checkbox (change)="markRendu()">
+            Marquer cet assignment comme rendu
+          </mat-checkbox>
+        </div>
       }
     </mat-card-content>
 
-    <mat-card-actions>
-      
+    <mat-card-actions class="detail-actions">
       <button
-        mat-raised-button
+        mat-stroked-button
         color="primary"
         [disabled]="!auth.isAdmin()"
-        (click)="goEdit()">
+        (click)="goEdit()"
+      >
+        <mat-icon>edit</mat-icon>
         EDIT
       </button>
 
-      <button mat-raised-button color="warn" (click)="onDelete()">Supprimer</button>
+      <span class="spacer"></span>
+
+      <button mat-raised-button color="warn" (click)="onDelete()">
+        <mat-icon>delete</mat-icon>
+        Supprimer
+      </button>
     </mat-card-actions>
   </mat-card>
 }
