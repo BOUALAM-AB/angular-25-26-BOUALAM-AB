@@ -2,12 +2,13 @@
   "name": "assignment-app",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "build": "ng build",
+    "ng": "node ./node_modules/@angular/cli/bin/ng.js",
+    "build": "npm run ng -- build",
     "start": "node server.js",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "watch": "npm run ng -- build --watch --configuration development",
+    "test": "npm run ng -- test"
   },
+
   "prettier": {
     "printWidth": 100,
     "singleQuote": true,
