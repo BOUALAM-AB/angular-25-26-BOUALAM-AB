@@ -1,111 +1,114 @@
-#  Assignment App – TP Angular + Node/MongoDB (TP5)
+#  Assignment App – TP Angular + Node/MongoDB (TP6)
 
-#  Abdellah Boualam
+#  Abdellah BOUALAM
 Master 1 MIAGE – Université Côte d’Azur (DS4H)
 Cours : Programmation Web Angular – Michel Buffa (2025)
-Entreprise d’alternance : PRO BTP Group – Projet GadarIhm
+
 
 ##  Objectif du projet
 
-Développer une application complète de **gestion de devoirs** (“Assignments App”) en **Angular** avec un **backend Node.js + Express + MongoDB**.  
-Ce projet reprend les différents TPs du cours *Programmation Web Angular* (Michel Buffa & Léo Donat) et ajoute les étapes finales :  
- **Peuplement de la base** et **Pagination complète (back + front)**.
+### Développer une application complète de gestion des devoirs (Assignments App) comprenant :
+-Un frontend Angular moderne (Standalone Components, Angular Material, RxJS)
+-Un backend Node.js + Express
+-Une base MongoDB Atlas
+-La pagination complète (front + back)
+-Le peuplement automatique de la base de données
+-L’hébergement 100% online : BACK + FRONT
+
+### Le projet reprend le TP du cours Angular, mais pousse beaucoup plus loin :
+- pagination avancée
+- recherche + filtres
+- rendu/non-rendu
+- auto-incrément ID
+- seeding massif
+- hébergement Render
+- application fonctionnelle complète
 
 ---
 
-##  Architecture générale
+# Liens du projet (hébergé en ligne)
 
-###  Frontend
-- **Framework :** Angular 17+
-- **UI :** Angular Material
-- **Langage :** TypeScript
-- **Gestion des données :** RxJS, Observables, BehaviorSubject
-- **Composants standalone** (pas de `NgModule`)
+## Service	URL :	https://angular-25-26-boualam-ab.onrender.com
 
-###  Backend
-- **Serveur :** Node.js / Express
-- **Base de données :** MongoDB Atlas (Cloud)
-- **ORM :** Mongoose
-- **Plugin :** mongoose-aggregate-paginate-v2 (pour la pagination)
+---
+##  Frontend Angular – Fonctionnalités
+
+### ✔ 1. Liste des devoirs (`ListeDevoirsComponent`)
+
+- Liste paginée avec Angular Material  
+- Recherche en temps réel  
+- Filtres disponibles :
+  - **Tous**
+  - **Rendus**
+  - **Non rendus**
+- Résumé automatique :
+  - Page **X / Y**
+  - Nombre total d’éléments
+  - Nombre d’éléments filtrés
+- Système de pagination :
+  - **Première** / **Précédente** / **Suivante** / **Dernière**
+- Navigation directe vers la page de détail
+- Boutons d’action :
+  - **Peupler BD** (génère 500 assignments)
+  - **Nouvel assignment**
 
 ---
 
-##  Fonctionnalités principales
+### ✔ 2. Ajout d’un devoir
 
-### 1️ Routage et navigation Angular
-Configuration dans `app.routes.ts` :
-- `/home` → liste des assignments  
-- `/add` → ajout d’un nouveau devoir  
-- `/assignment/:id` → détails d’un devoir  
-- `/assignment/:id/edit` → édition (protégée)  
-- `/generation` → génération de données  
-
-Redirection par défaut vers `/home`.  
-Certaines routes sont protégées par un **authGuard**.
+- Formulaire moderne basé sur **Angular Material**
+- Two-way binding avec `ngModel`
+- Validation des champs
+- Envoi vers l’API via `AssignmentsService`
+- Redirection vers `/home` après l’ajout
 
 ---
 
-### 2️ Authentification simulée
-- **Service : `AuthService`**
-  - `loginAsUser()` / `loginAsAdmin()` / `logout()`
-  - `isLogged()` / `isAdmin()`
-- Permet de :
-  - Afficher ou masquer les boutons “EDIT” et “Supprimer”
-  - Protéger la route `/assignment/:id/edit` (réservée aux admins)
+### ✔ 3. Détail d’un assignment (`AssignmentDetailComponent`)
+
+- Affichage complet des informations du devoir
+- Bouton **Marquer comme rendu**
+- Actions réservées à l’admin :
+  - Modifier
+  - Supprimer
 
 ---
 
-### 3️ Services
+### ✔ 4. Modification d’un devoir (`EditAssignmentComponent`)
 
-#### `AssignmentsService`
-Gère la communication avec le backend et maintient un cache local via `BehaviorSubject`.
-
-- Méthodes principales :
-  - `getAssignmentsPage(page, limit)` → récupère une page d’assignments  
-  - `getAssignment(id)` → un devoir précis  
-  - `addAssignment(a)` → ajoute un devoir  
-  - `updateAssignment(a)` → met à jour  
-  - `deleteAssignmentById(id)` → supprime  
-  - `peuplerBDAvecForkJoin()` → insère 500 devoirs fictifs dans la BD  
-
-#### `LoggingService`
-- Trace les opérations CRUD dans la console.
-
-#### `AuthService`
-- Gère l’état de connexion et les rôles (utilisateur/admin).
+- Formulaire pré-rempli avec les données du devoir
+- Mise à jour via l’API (`updateAssignment`)
+- Route protégée par un **authGuard**
+- Redirection vers la page de liste après validation
 
 ---
 
-### 4️ Composants principaux
+### ✔ 5. Authentification simulée (`AuthService`)
 
-#### 🗂 `ListeDevoirsComponent`
-- Affiche la liste paginée des devoirs avec **Angular Material (`MatList`)**
-- Bouton “Ajouter Assignment”
-- Bouton “PeuplerBD” (pour insérer les 500 devoirs de test)
-- Pagination :
-  - Variables : `page`, `limit`, `totalDocs`, `totalPages`, `hasPrevPage`, `hasNextPage`
-  - Navigation via boutons :
-    - Première / Précédente / Suivante / Dernière
-  - Désactivation automatique des boutons en début/fin de liste
+#### Fonctions :
 
-####  `AddAssignmentComponent`
-- Formulaire avec `[(ngModel)]` (nom, date)
-- Validation simple (champs obligatoires)
-- Émission d’un événement `(create)` vers le parent
-- Ajout via le service
+- `loginAsUser()`
+- `loginAsAdmin()`
+- `logout()`
+- `isLogged()`
+- `isAdmin()`
 
-####  `AssignmentDetailComponent`
-- Affiche les informations détaillées du devoir sélectionné
-- Bouton “Marquer comme rendu”
-- Bouton “EDIT” visible seulement pour l’admin
-- Bouton “Supprimer” actif uniquement pour l’admin
+#### Impact sur l’UI :
 
-####  `EditAssignmentComponent`
-- Formulaire pré-rempli pour modifier un devoir existant
-- Sauvegarde via `updateAssignment()`
-- Redirection vers `/home` après mise à jour
-- Route protégée par le `authGuard`
+- Boutons **EDIT** & **DELETE** visibles uniquement pour un admin
+- Route `/assignment/:id/edit` protégée (interdite aux utilisateurs simples)
 
+---
+
+### ✔ 6. Service de gestion des données (`AssignmentsService`)
+
+- `getAssignmentsPage(page, limit)` — pagination backend  
+- `getAssignment(id)` — obtenir un devoir précis  
+- `addAssignment(a)` — ajouter un devoir  
+- `updateAssignment(a)` — modifier un devoir  
+- `deleteAssignmentById(id)` — supprimer un devoir  
+- `peuplerBDAvecForkJoin()` — création de 500 devoirs depuis un fichier JSON  
+- Cache local performant via **BehaviorSubject**
 
 ---
 
@@ -150,84 +153,18 @@ Ce mécanisme rend la récupération des données plus performante et plus lég�
 
 ---
 
-##  Pagination côté frontend
-
-La pagination est gérée de manière fluide dans Angular :
-
-- Le service `AssignmentsService` interroge le backend en passant les paramètres `page` et `limit`.
-- Le composant `ListeDevoirsComponent` met à jour dynamiquement :
-  - la page actuelle,
-  - le nombre total de documents,
-  - le nombre total de pages,
-  - et l’état des boutons de navigation.
-- Le template affiche une **barre de pagination** permettant de naviguer entre les pages de résultats.
-
----
-
-##  Peuplement automatique (Seeding)
-
-Une méthode `peuplerBDAvecForkJoin()` a été ajoutée pour insérer automatiquement **500 devoirs fictifs** dans la base de données.  
-Ces données sont définies dans un fichier `data.ts` (format JSON exporté).  
-Le bouton “PeuplerBD” dans la liste appelle cette méthode et recharge la base.
-
-Ce mécanisme permet de tester la pagination et les performances de l’application avec un grand volume de données.
-
----
-
-##  Technologies utilisées
-
-
-|---------------------|---------------------------------------------|
-| **Frontend**        | Angular, Angular Material, TypeScript, RxJS |
-| **Backend**         | Node.js, Express, Mongoose                  |
-| **Base de données** | MongoDB Atlas (Cloud)                       |
-| **Plugins**         | mongoose-aggregate-paginate-v2              |
-| **Autres**          | body-parser, observables, BehaviorSubject   |
-|---------------------|---------------------------------------------|
-
----
 
 ##  Structure du projet
 
-assignment-app/
-├── api/
-│   ├── model/
-│   │   ├── assignment.js
-│   │   └── counter.js
-│   ├── routes/
-│   │   └── assignments.js
-│   ├── server.js
-│   └── package.json
-│
-├── front/
-│   ├── src/app/
-│   │   ├── pages/
-│   │   │   ├── liste-devoirs/
-│   │   │   │     ├── add-assignment/
-│   │   │   │     ├── assignment-detail/
-│   │   │   └── edit-assignment/
-│   │   ├── model/
-│   │   ├── service/
-│   │   └── shared/data.ts
-│   └── package.json
-│
-└── README.md
-
-##  Lancer le projet
-
-### 1️ Démarrer le backend
-```bash
-cd api
-npm install
-node server.js
-```
----
-
-### 2 Démarrer le backend
-```bash
-cd front
-npm install
-ng serve
-```
+<img width="290" height="456" alt="image" src="https://github.com/user-attachments/assets/3416f8d0-77d0-4645-8ac2-8ea24cd6db63" />
 
 ---
+
+<img width="1907" height="948" alt="image" src="https://github.com/user-attachments/assets/8016a7c0-b889-4f8f-9547-a29c8fedb95a" />
+
+<img width="1913" height="947" alt="image" src="https://github.com/user-attachments/assets/baf632ef-db6a-40ee-84a5-419ac471a659" />
+
+
+
+
+
